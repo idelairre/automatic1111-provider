@@ -6,19 +6,11 @@ import {
 import {
   FetchFunction,
   combineHeaders,
-  createBinaryResponseHandler,
   createJsonResponseHandler,
   createJsonErrorResponseHandler,
-  createStatusCodeErrorResponseHandler,
-  delay,
-  getFromApi,
   postJsonToApi,
 } from '@ai-sdk/provider-utils';
-import { Automatic1111ImageSettings } from './Automatic1111-image-settings';
 import { z } from 'zod/v4';
-
-const DEFAULT_POLL_INTERVAL_MILLIS = 500;
-const DEFAULT_MAX_POLL_ATTEMPTS = 60000 / DEFAULT_POLL_INTERVAL_MILLIS;
 
 interface Automatic1111ImageModelConfig {
   provider: string;
@@ -33,8 +25,6 @@ interface Automatic1111ImageModelConfig {
 export class Automatic1111ImageModel implements ImageModelV2 {
   readonly specificationVersion = 'v2';
   readonly maxImagesPerCall = 1;
-  readonly pollIntervalMillis = DEFAULT_POLL_INTERVAL_MILLIS;
-  readonly maxPollAttempts = DEFAULT_MAX_POLL_ATTEMPTS;
 
   get provider(): string {
     return this.config.provider;
@@ -69,7 +59,7 @@ export class Automatic1111ImageModel implements ImageModelV2 {
     }
 
     // remove non-request options from providerOptions
-    const { pollIntervalMillis, maxPollAttempts, negative_prompt, styles, steps, cfg_scale, sampler_name, denoising_strength, ...providerRequestOptions } =
+    const { negative_prompt, styles, steps, cfg_scale, sampler_name, denoising_strength, ...providerRequestOptions } =
       providerOptions.automatic1111 ?? {};
 
     const currentDate = this.config._internal?.currentDate?.() ?? new Date();

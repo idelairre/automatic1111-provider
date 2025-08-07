@@ -16,10 +16,6 @@ export interface Automatic1111ImageSettings {
   sampler_name?: string;
   denoising_strength?: number;
 
-  // Custom
-  maxPollAttempts?: number;
-  pollIntervalMillis?: number; 
-
 /*
   // seed?: number;
   subseed?: number;

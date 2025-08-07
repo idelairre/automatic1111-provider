@@ -1,6 +1,19 @@
 {
+  "name": "automatic1111-provider",
+  "version": "1.0.0",
+  "type": "module",
   "dependencies": {
     "@ai-sdk/provider": "^2.0.0",
-    "@ai-sdk/provider-utils": "^3.0.1"
+    "@ai-sdk/provider-utils": "^3.0.1",
+    "ai": "^5.0.5"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.9.2",
+    "ts-node": "^10.9.0"
+  },
+  "scripts": {
+    "build": "tsc",
+    "test": "node --loader ts-node/esm src/test.ts"
   }
 }
