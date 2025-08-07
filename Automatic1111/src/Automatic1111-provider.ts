@@ -1,6 +1,5 @@
 import { ImageModelV2, NoSuchModelError, ProviderV2 } from '@ai-sdk/provider';
 import {
-  FetchFunction,
   withoutTrailingSlash,
 } from '@ai-sdk/provider-utils';
 import { Automatic1111ImageModel } from './Automatic1111-image-model.js';
@@ -19,11 +18,6 @@ Base URL for the API calls.
 Custom headers to include in the requests.
   */
   headers?: Record<string, string>;
-  /**
-Custom fetch implementation. You can use it as a middleware to intercept requests,
-or to provide a custom fetch implementation for e.g. testing.
-  */
-  fetch?: FetchFunction;
 }
 
 export interface Automatic1111Provider extends ProviderV2 {
@@ -44,6 +38,7 @@ export function createAutomatic1111(options: Automatic1111ProviderSettings = {})
   const baseURL = withoutTrailingSlash(options.baseURL ?? defaultBaseURL);
   const getHeaders = () => ({
     'Content-Type': 'application/json',
+    ...(options.apiKey ? { 'Authorization': `Bearer ${options.apiKey}`} : {}),
     ...options.headers,
   });
 
@@ -52,7 +47,6 @@ export function createAutomatic1111(options: Automatic1111ProviderSettings = {})
       provider: 'automatic1111',
       baseURL: baseURL ?? defaultBaseURL,
       headers: getHeaders,
-      fetch: options.fetch,
     });
 
   return {

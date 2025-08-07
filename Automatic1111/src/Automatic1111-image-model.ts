@@ -2,9 +2,9 @@ import {
   ImageModelV2,
   ImageModelV2CallWarning,
   InvalidResponseDataError,
+  NoSuchModelError,
 } from '@ai-sdk/provider';
 import {
-  FetchFunction,
   combineHeaders,
   createJsonResponseHandler,
   createJsonErrorResponseHandler,
@@ -16,7 +16,6 @@ interface Automatic1111ImageModelConfig {
   provider: string;
   baseURL: string;
   headers: () => Record<string, string>;
-  fetch?: FetchFunction;
   _internal?: {
     currentDate?: () => Date;
   };
@@ -58,22 +57,30 @@ export class Automatic1111ImageModel implements ImageModelV2 {
       });
     }
     // Extract the provider options
-    const { negative_prompt, styles, steps, cfg_scale, sampler_name, denoising_strength, ...providerRequestOptions } =
+    const { negative_prompt, styles, steps, cfg_scale, sampler_name, denoising_strength, check_model_exists, ...providerRequestOptions } =
       providerOptions.automatic1111 ?? {};
 
     // Get the current date for timestamp
     const currentDate = this.config._internal?.currentDate?.() ?? new Date();
     // Combine the headers
     const fullHeaders = combineHeaders(this.config.headers(), headers);
-    // Get the available models to check (automatic1111 uses default model if not specified, so we need to check if the model is available)
-    const availableModels = await fetch(this.getAutomatic1111ModelsUrl());
-    const availableModelsJson = await availableModels.json();
-    const model = availableModelsJson.find((model: any) => model.model_name === this.modelId);
-    if (!model) {
-      throw new Error(`Model ${this.modelId} not found`);
+    // Check if the model exists
+    if (check_model_exists) {
+      // Get the available models to check (automatic1111 uses default model if not specified, so we need to check if the model is available)
+      const availableModels = await fetch(this.getAutomatic1111ModelsUrl());
+      const availableModelsJson = await availableModels.json();
+      const model = Automatic1111ModelListSchema.parse(availableModelsJson).find((model) => model.model_name === this.modelId);
+      if (!model) {
+        throw new NoSuchModelError({
+          errorName: 'NoSuchModelError',
+          modelId: this.modelId,
+          modelType: 'imageModel',
+          message: `Model ${this.modelId} not found`,
+        });
+      }
     }
 
-    const modelId = model.model_name;
+    const modelId = this.modelId;
 
     // Send the request to the API
     const { value: generationResponse, responseHeaders } = await postJsonToApi({
@@ -97,7 +104,6 @@ export class Automatic1111ImageModel implements ImageModelV2 {
         ...providerRequestOptions,
       },
       abortSignal,
-      fetch: this.config.fetch,
       failedResponseHandler: this.createAutomatic1111ErrorHandler(),
       successfulResponseHandler: createJsonResponseHandler(
         Automatic1111GenerationResponseSchema,
@@ -151,7 +157,7 @@ export class Automatic1111ImageModel implements ImageModelV2 {
     const base64Data = base64String.replace(/^data:image\/[a-z]+;base64,/, '');
     
     // Convert base64 to binary string
-    const binaryString = atob(base64Data);
+    const binaryString = Buffer.from(base64Data, 'base64').toString('binary');
     
     // Convert binary string to Uint8Array
     const bytes = new Uint8Array(binaryString.length);
@@ -190,5 +196,14 @@ const Automatic1111ErrorSchema = z.object({
     }),
   ),
 });
+
+const Automatic1111ModelListSchema = z.array(z.object({
+  title: z.string(),
+  model_name: z.string(),
+  hash: z.string(),
+  sha256: z.string(),
+  filename: z.string(),
+  config: z.string().nullish(),
+}));
 
 export type Automatic1111ErrorData = z.infer<typeof Automatic1111ErrorSchema>;

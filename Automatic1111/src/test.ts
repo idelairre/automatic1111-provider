@@ -27,11 +27,13 @@ async function main() {
           negative_prompt: 'blurry, low quality',
           sampler_name: "Euler a",
           denoising_strength: 0.5,
+          check_model_exists: true,
         }
       }
     });
         
     console.log('\n✅ Image generated successfully!');
+    console.log("first 100 characters of the base64 image: " + images[0].base64.slice(0, 100));
     
   } catch (error) {
     console.error('\n❌ Error generating image:');
