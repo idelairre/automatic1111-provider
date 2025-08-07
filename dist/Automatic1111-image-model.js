@@ -1,6 +1,6 @@
 import { InvalidResponseDataError, NoSuchModelError, } from '@ai-sdk/provider';
 import { combineHeaders, createJsonResponseHandler, createJsonErrorResponseHandler, postJsonToApi, } from '@ai-sdk/provider-utils';
-import { z } from 'zod';
+import { z } from 'zod/v4';
 export class Automatic1111ImageModel {
     get provider() {
         return this.config.provider;
@@ -90,7 +90,7 @@ export class Automatic1111ImageModel {
     // Create the error handler for the API
     createAutomatic1111ErrorHandler() {
         return createJsonErrorResponseHandler({
-            errorSchema: automatic1111ErrorSchema,
+            errorSchema: Automatic1111ErrorSchema,
             errorToMessage: (error) => error.detail[0].msg ?? 'Unknown error',
         });
     }
@@ -117,11 +117,11 @@ export class Automatic1111ImageModel {
     }
 }
 // Schema for the response from the API
-const automatic1111GenerationResponseSchema = z.object({
+const Automatic1111GenerationResponseSchema = z.object({
     images: z.array(z.string()),
 });
 // Schema for the error response from the API
-const automatic1111ErrorSchema = z.object({
+const Automatic1111ErrorSchema = z.object({
     detail: z.array(z.object({
         loc: z.array(z.object({
             where: z.string(),
@@ -140,7 +140,7 @@ const automatic1111ErrorSchema = z.object({
             .nullish(),
     })),
 });
-const automatic1111ModelListSchema = z.array(z.object({
+export const Automatic1111ModelListSchema = z.array(z.object({
     title: z.string(),
     model_name: z.string(),
     hash: z.string(),

@@ -1,5 +1,5 @@
 import { ImageModelV2 } from '@ai-sdk/provider';
-import { z } from 'zod';
+import { z } from 'zod/v4';
 interface Automatic1111ImageModelConfig {
     provider: string;
     baseURL: string;
@@ -21,18 +21,12 @@ export declare class Automatic1111ImageModel implements ImageModelV2 {
     private getAutomatic1111ModelsUrl;
     private base64ToUint8Array;
 }
-declare const automatic1111ErrorSchema: z.ZodObject<{
+declare const Automatic1111ErrorSchema: z.ZodObject<{
     detail: z.ZodArray<z.ZodObject<{
         loc: z.ZodArray<z.ZodObject<{
             where: z.ZodString;
             index: z.ZodNumber;
-        }, "strip", z.ZodTypeAny, {
-            where: string;
-            index: number;
-        }, {
-            where: string;
-            index: number;
-        }>, "many">;
+        }, z.core.$strip>>;
         msg: z.ZodString;
         type: z.ZodString;
         ctx: z.ZodOptional<z.ZodNullable<z.ZodObject<{
@@ -41,80 +35,16 @@ declare const automatic1111ErrorSchema: z.ZodObject<{
             pos: z.ZodNumber;
             lineno: z.ZodNumber;
             colno: z.ZodNumber;
-        }, "strip", z.ZodTypeAny, {
-            msg: string;
-            doc: string;
-            pos: number;
-            lineno: number;
-            colno: number;
-        }, {
-            msg: string;
-            doc: string;
-            pos: number;
-            lineno: number;
-            colno: number;
-        }>>>;
-    }, "strip", z.ZodTypeAny, {
-        type: string;
-        loc: {
-            where: string;
-            index: number;
-        }[];
-        msg: string;
-        ctx?: {
-            msg: string;
-            doc: string;
-            pos: number;
-            lineno: number;
-            colno: number;
-        } | null | undefined;
-    }, {
-        type: string;
-        loc: {
-            where: string;
-            index: number;
-        }[];
-        msg: string;
-        ctx?: {
-            msg: string;
-            doc: string;
-            pos: number;
-            lineno: number;
-            colno: number;
-        } | null | undefined;
-    }>, "many">;
-}, "strip", z.ZodTypeAny, {
-    detail: {
-        type: string;
-        loc: {
-            where: string;
-            index: number;
-        }[];
-        msg: string;
-        ctx?: {
-            msg: string;
-            doc: string;
-            pos: number;
-            lineno: number;
-            colno: number;
-        } | null | undefined;
-    }[];
-}, {
-    detail: {
-        type: string;
-        loc: {
-            where: string;
-            index: number;
-        }[];
-        msg: string;
-        ctx?: {
-            msg: string;
-            doc: string;
-            pos: number;
-            lineno: number;
-            colno: number;
-        } | null | undefined;
-    }[];
-}>;
-export type Automatic1111ErrorData = z.infer<typeof automatic1111ErrorSchema>;
+        }, z.core.$strip>>>;
+    }, z.core.$strip>>;
+}, z.core.$strip>;
+export declare const Automatic1111ModelListSchema: z.ZodArray<z.ZodObject<{
+    title: z.ZodString;
+    model_name: z.ZodString;
+    hash: z.ZodString;
+    sha256: z.ZodString;
+    filename: z.ZodString;
+    config: z.ZodOptional<z.ZodNullable<z.ZodString>>;
+}, z.core.$strip>>;
+export type Automatic1111ErrorData = z.infer<typeof Automatic1111ErrorSchema>;
 export {};
