@@ -1,6 +1,6 @@
 {
   "name": "automatic1111-provider",
-  "version": "1.0.1",
+  "version": "0.1.0",
   "description": "A TypeScript provider for the Vercel AI SDK that enables image generation using AUTOMATIC1111 Stable Diffusion WebUI",
   "type": "module",
   "main": "./dist/index.js",
@@ -28,11 +28,11 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/ponesicek/automatic1111-provider.git"
+    "url": "https://github.com/Ponesicek/automatic1111-provider"
   },
-  "homepage": "https://github.com/ponesicek/automatic1111-provider#readme",
+  "homepage": "https://github.com/Ponesicek/automatic1111-provider#readme",
   "bugs": {
-    "url": "https://github.com/ponesicek/automatic1111-provider/issues"
+    "url": "https://github.com/Ponesicek/automatic1111-provider/issues"
   },
   "author": "ponesicek",
   "license": "MIT",
