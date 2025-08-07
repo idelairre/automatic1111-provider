@@ -1,7 +1,6 @@
 import { ImageModelV2, NoSuchModelError, ProviderV2 } from '@ai-sdk/provider';
 import {
   FetchFunction,
-  loadApiKey,
   withoutTrailingSlash,
 } from '@ai-sdk/provider-utils';
 import { Automatic1111ImageModel } from './Automatic1111-image-model.js';
@@ -9,8 +8,7 @@ import { Automatic1111ImageModelId } from './Automatic1111-image-settings.js';
 
 export interface Automatic1111ProviderSettings {
   /**
-Luma API key. Default value is taken from the `LUMA_API_KEY` environment
-variable.
+Not needed for Automatic1111.
   */
   apiKey?: string;
   /**
@@ -51,7 +49,7 @@ export function createAutomatic1111(options: Automatic1111ProviderSettings = {})
 
   const createImageModel = (modelId: Automatic1111ImageModelId) =>
     new Automatic1111ImageModel(modelId, {
-      provider: 'automatic1111.image',
+      provider: 'automatic1111',
       baseURL: baseURL ?? defaultBaseURL,
       headers: getHeaders,
       fetch: options.fetch,

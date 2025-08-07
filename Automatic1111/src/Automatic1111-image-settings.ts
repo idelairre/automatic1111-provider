@@ -1,12 +1,7 @@
-// https://luma.ai/models?type=image
 export type Automatic1111ImageModelId = (string & {});
 
 /**
-Configuration settings for Luma image generation.
-
-Since the Luma API processes images through an asynchronous queue system, these
-settings allow you to tune the polling behavior when waiting for image
-generation to complete.
+Configuration settings for Automatic1111 image generation.
  */
 export interface Automatic1111ImageSettings {
   negative_prompt?: string;
