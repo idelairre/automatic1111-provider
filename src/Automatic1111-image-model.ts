@@ -197,7 +197,7 @@ const Automatic1111ErrorSchema = z.object({
   ),
 });
 
-const Automatic1111ModelListSchema = z.array(z.object({
+export const Automatic1111ModelListSchema = z.array(z.object({
   title: z.string(),
   model_name: z.string(),
   hash: z.string(),
