@@ -9,23 +9,26 @@ async function main() {
     // Test the provider setup
     console.log('📋 Provider details:');
     console.log('- Base URL: http://127.0.0.1:7860 (default)');
-    console.log('- Model ID: plantMilkModelSuite_hempII');
+    console.log('- Model ID: v1-5-pruned-emaonly');
     
-    console.log('\n🎨 Generating image with prompt: "A cute baby sea otter"');
+    console.log('\n🎨 Generating image with prompt: "A cute baby sea otter", and some other test properties');
 
     const automatic1111 = createAutomatic1111({
       baseURL: 'http://127.0.0.1:7860',
     });
     
     const { images } = await generateImage({
-      model: automatic1111.image('model'), // Common Stable Diffusion model name
+      model: automatic1111.image('v1-5-pruned-emaonly'), // Default Automatic1111 model
       prompt: 'A cute baby sea otter',
       n: 2,
+      seed: 42,
       providerOptions: {
         automatic1111: {
           steps: 20,
           cfg_scale: 7,
           negative_prompt: 'blurry, low quality',
+          sampler_name: "Euler a",
+          denoising_strength: 10,
         }
       }
     });

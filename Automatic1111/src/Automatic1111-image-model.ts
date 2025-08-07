@@ -64,7 +64,16 @@ export class Automatic1111ImageModel implements ImageModelV2 {
 
     const currentDate = this.config._internal?.currentDate?.() ?? new Date();
     const fullHeaders = combineHeaders(this.config.headers(), headers);
+    const availableModels = await fetch(this.getAutomatic1111ModelsUrl());
+    const availableModelsJson = await availableModels.json();
+    const model = availableModelsJson.find((model: any) => model.model_name === this.modelId);
+    if (!model) {
+      throw new Error(`Model ${this.modelId} not found`);
+    }
 
+    const modelId = model.model_name;
+
+    
     // The actual request I believe is here, too retarded to be sure
     const { value: generationResponse, responseHeaders } = await postJsonToApi({
       url: this.getAutomatic1111GenerationsUrl(),
@@ -82,9 +91,8 @@ export class Automatic1111ImageModel implements ImageModelV2 {
         width: size?.split('x')[0] ?? 512,
         height: size?.split('x')[1] ?? 512,
         override_settings: {
-          sd_model_checkpoint: this.modelId,
+          sd_model_checkpoint: modelId,
         },
-        model: this.modelId,
         ...providerRequestOptions,
       },
       abortSignal,
@@ -107,7 +115,7 @@ export class Automatic1111ImageModel implements ImageModelV2 {
       images,
       warnings,
       response: {
-        modelId: this.modelId,
+        modelId: modelId,
         timestamp: currentDate,
         headers: responseHeaders,
       },
@@ -124,6 +132,10 @@ export class Automatic1111ImageModel implements ImageModelV2 {
 
   private getAutomatic1111GenerationsUrl() {
     return `${this.config.baseURL}/sdapi/v1/txt2img/`;
+  }
+
+  private getAutomatic1111ModelsUrl() {
+    return `${this.config.baseURL}/sdapi/v1/sd-models/`;
   }
 
   private base64ToUint8Array(base64String: string): Uint8Array {
