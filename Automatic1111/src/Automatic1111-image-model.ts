@@ -57,12 +57,15 @@ export class Automatic1111ImageModel implements ImageModelV2 {
           'This model does not support the `aspectRatio` option. Use `size` instead.',
       });
     }
-
+    // Extract the provider options
     const { negative_prompt, styles, steps, cfg_scale, sampler_name, denoising_strength, ...providerRequestOptions } =
       providerOptions.automatic1111 ?? {};
 
+    // Get the current date for timestamp
     const currentDate = this.config._internal?.currentDate?.() ?? new Date();
+    // Combine the headers
     const fullHeaders = combineHeaders(this.config.headers(), headers);
+    // Get the available models to check (automatic1111 uses default model if not specified, so we need to check if the model is available)
     const availableModels = await fetch(this.getAutomatic1111ModelsUrl());
     const availableModelsJson = await availableModels.json();
     const model = availableModelsJson.find((model: any) => model.model_name === this.modelId);
@@ -72,6 +75,7 @@ export class Automatic1111ImageModel implements ImageModelV2 {
 
     const modelId = model.model_name;
 
+    // Send the request to the API
     const { value: generationResponse, responseHeaders } = await postJsonToApi({
       url: this.getAutomatic1111GenerationsUrl(),
       headers: fullHeaders,
@@ -100,14 +104,17 @@ export class Automatic1111ImageModel implements ImageModelV2 {
       ),
     });
 
+    // Check if the response is valid
     if (generationResponse === null || generationResponse === undefined || generationResponse.images === null || generationResponse.images === undefined) {
       throw new InvalidResponseDataError({
         data: generationResponse,
         message: 'Invalid response data',
       });
     }
+    // Convert the images to Uint8Array
     const images = generationResponse.images.map(image => this.base64ToUint8Array(image));
 
+    // Return the images
     return {
       images,
       warnings,
@@ -119,6 +126,7 @@ export class Automatic1111ImageModel implements ImageModelV2 {
     };
   }
 
+  // Create the error handler for the API
   private createAutomatic1111ErrorHandler() {
     return createJsonErrorResponseHandler({
       errorSchema: Automatic1111ErrorSchema,
@@ -127,14 +135,17 @@ export class Automatic1111ImageModel implements ImageModelV2 {
     });
   }
 
+  // Get the URL for the generations API
   private getAutomatic1111GenerationsUrl() {
     return `${this.config.baseURL}/sdapi/v1/txt2img/`;
   }
 
+  // Get the URL for the models API
   private getAutomatic1111ModelsUrl() {
     return `${this.config.baseURL}/sdapi/v1/sd-models/`;
   }
 
+  // Convert a base64 string to a Uint8Array
   private base64ToUint8Array(base64String: string): Uint8Array {
     // Remove data URL prefix if present (e.g., "data:image/png;base64,")
     const base64Data = base64String.replace(/^data:image\/[a-z]+;base64,/, '');
@@ -152,10 +163,12 @@ export class Automatic1111ImageModel implements ImageModelV2 {
   }
 }
 
+// Schema for the response from the API
 const Automatic1111GenerationResponseSchema = z.object({
   images: z.array(z.string()),
 });
 
+// Schema for the error response from the API
 const Automatic1111ErrorSchema = z.object({
   detail: z.array(
     z.object({
