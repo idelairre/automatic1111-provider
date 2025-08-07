@@ -4,8 +4,8 @@ import {
   loadApiKey,
   withoutTrailingSlash,
 } from '@ai-sdk/provider-utils';
-import { Automatic1111ImageModel } from './Automatic1111-image-model';
-import { Automatic1111ImageModelId } from './Automatic1111-image-settings';
+import { Automatic1111ImageModel } from './Automatic1111-image-model.js';
+import { Automatic1111ImageModelId } from './Automatic1111-image-settings.js';
 
 export interface Automatic1111ProviderSettings {
   /**

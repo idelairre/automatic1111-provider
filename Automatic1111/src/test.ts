@@ -1,5 +1,5 @@
 import { experimental_generateImage as generateImage } from 'ai';
-import { automatic1111 } from './Automatic1111-provider';
+import { automatic1111 } from './index.js';
 import fs from 'fs';
 
 async function main() {
