@@ -1,6 +1,6 @@
 {
-  "name": "automatic1111",
-  "version": "0.1.0",
+  "name": "automatic1111-provider",
+  "version": "0.1.1",
   "description": "A TypeScript provider for the Vercel AI SDK that enables image generation using AUTOMATIC1111 Stable Diffusion WebUI",
   "type": "module",
   "main": "./dist/index.js",

@@ -1,127 +1,92 @@
-# Automatic1111 Provider for Vercel AI SDK
+---
+title: Automatic1111
+description: Automatic1111 Provider for the AI SDK
+---
 
-A TypeScript provider for the [Vercel AI SDK](https://sdk.vercel.ai) that enables image generation using [AUTOMATIC1111](https://github.com/AUTOMATIC1111/stable-diffusion-webui) Stable Diffusion WebUI.
+# Automatic1111
 
-## Features
+[AUTOMATIC1111](https://github.com/AUTOMATIC1111/stable-diffusion-webui) is a popular web interface for Stable Diffusion that provides a comprehensive set of features for image generation. The Automatic1111 provider for the AI SDK enables seamless integration with locally hosted AUTOMATIC1111 instances while offering unique advantages:
 
-- 🎨 **Image Generation**: Generate images using Stable Diffusion models via AUTOMATIC1111's API
-- 🎯 **Type Safety**: Full TypeScript support with proper type definitions
-- 🚀 **Modern API**: Built on the latest Vercel AI SDK v2 specification
-- 🔄 **Error Handling**: Comprehensive error handling with detailed error messages
+- **Local Control**: Full control over your image generation with local Stable Diffusion models
+- **No API Costs**: Generate unlimited images without per-request charges
+- **Model Flexibility**: Use any Stable Diffusion checkpoint
+- **Privacy**: All generation happens locally on your hardware
+- **Community Models**: Access to thousands of community-created models from Civitai and HuggingFace
 
-## Installation
+Learn more about AUTOMATIC1111's capabilities in the [AUTOMATIC1111 Documentation](https://github.com/AUTOMATIC1111/stable-diffusion-webui).
+
+## Setup
+
+You need to have AUTOMATIC1111 running with the `--api` flag enabled. Start your AUTOMATIC1111 instance with:
 
 ```bash
+# Windows
+./webui.bat --api
+
+# Linux/Mac
+./webui.sh --api
+```
+
+The Automatic1111 provider is available in the `automatic1111-provider` module. You can install it with:
+
+```bash
+# pnpm
+pnpm add automatic1111-provider
+
+# npm
+npm install automatic1111-provider
+
+# yarn
 npm install automatic1111-provider
 ```
 
-## Prerequisites
+## Provider Instance
 
-Before using this provider, you need to have AUTOMATIC1111 running with the API enabled:
-
-1. **Install AUTOMATIC1111**: Follow the [official installation guide](https://github.com/AUTOMATIC1111/stable-diffusion-webui)
-2. **Enable API**: Start AUTOMATIC1111 with the `--api` flag:
-   ```bash
-   # Windows
-   ./webui.bat --api
-   
-   # Linux/Mac
-   ./webui.sh --api
-   ```
-3. **Verify Setup**: Your AUTOMATIC1111 instance should be accessible at `http://127.0.0.1:7860` by default
-
-## Quick Start
+To create an Automatic1111 provider instance, use the `createAutomatic1111` function:
 
 ```typescript
-import { experimental_generateImage as generateImage } from 'ai';
 import { createAutomatic1111 } from 'automatic1111-provider';
 
-// Create the provider instance
 const automatic1111 = createAutomatic1111({
   baseURL: 'http://127.0.0.1:7860', // Your AUTOMATIC1111 instance
 });
-
-// Generate an image
-const { images } = await generateImage({
-  model: automatic1111.image('v1-5-pruned-emaonly'), // Your model name
-  prompt: 'A beautiful sunset over mountains',
-  n: 1,
-  size: '512x512',
-});
-
-console.log('Generated image:', images[0]);
 ```
 
-## Configuration
+## Image Models
 
-### Provider Settings
+The Automatic1111 provider supports image generation through the `image()` method:
 
 ```typescript
-import { createAutomatic1111 } from 'automatic1111-provider';
+// Basic image generation
+const imageModel = automatic1111.image('v1-5-pruned-emaonly');
 
-const automatic1111 = createAutomatic1111({
-  baseURL: 'http://127.0.0.1:7860', // AUTOMATIC1111 API endpoint
-});
+// With custom model
+const sdxlModel = automatic1111.image('sd_xl_base_1.0');
 ```
 
-### Provider Options
-
-You can customize the image generation with AUTOMATIC1111-specific options:
-
-```typescript
-const { images } = await generateImage({
-  model: automatic1111.image('your-model-name'),
-  prompt: 'A cyberpunk cityscape at night',
-  providerOptions: {
-    automatic1111: {
-      negative_prompt: 'blurry, low quality, distorted',
-      steps: 30,
-      cfg_scale: 7.5,
-      sampler_name: 'euler a',
-      denoising_strength: 0.7,
-      styles: ['anime', 'high quality'],
-      check_model_exists: true
-    }
-  }
-});
-```
-
-#### Available Options
-
-| Option | Type | Description |
-|--------|------|-------------|
-| `negative_prompt` | `string` | What you don't want in the image |
-| `steps` | `number` | Number of sampling steps (default: 20) |
-| `cfg_scale` | `number` | CFG (Classifier Free Guidance) scale (default: 7) |
-| `sampler_name` | `string` | Sampling method (e.g., "Euler a", "DPM++ 2M Karras") |
-| `denoising_strength` | `number` | Denoising strength for img2img (0.0-1.0) |
-| `styles` | `string[]` | Apply predefined styles |
-| `check_model_exists` | `boolean` | Automatic1111 uses current model if model name is wrong, which can lead to unexpected results. This option will check if the model exists and throw an error if it doesn't. |
-
-
-## Usage Examples
+## Examples
 
 ### Basic Image Generation
 
 ```typescript
-import { experimental_generateImage as generateImage } from 'ai';
 import { automatic1111 } from 'automatic1111-provider';
+import { experimental_generateImage as generateImage } from 'ai';
 
-const result = await generateImage({
-  model: automatic1111.image('sd_xl_base_1.0'),
-  prompt: 'A majestic dragon flying over a medieval castle',
-  size: '1024x1024',
+const { images } = await generateImage({
+  model: automatic1111.image('v1-5-pruned-emaonly'),
+  prompt: 'A beautiful sunset over mountains',
+  size: '512x512',
 });
 ```
 
 ### Advanced Configuration
 
 ```typescript
-const result = await generateImage({
+const { images } = await generateImage({
   model: automatic1111.image('realistic-vision-v4'),
   prompt: 'Portrait of a wise old wizard with a long beard',
-  n: 2, // Generate 2 images
-  seed: 12345, // Fixed seed for reproducibility
+  n: 2,
+  seed: 12345,
   providerOptions: {
     automatic1111: {
       negative_prompt: 'blurry, ugly, deformed, low quality',
@@ -129,67 +94,39 @@ const result = await generateImage({
       cfg_scale: 8.5,
       sampler_name: 'DPM++ SDE Karras',
       styles: ['photorealistic', 'detailed'],
+      check_model_exists: true,
     }
   }
 });
 ```
 
-## Troubleshooting
+## Provider Options
 
-### Common Issues
+The Automatic1111 provider supports the following options for customizing image generation:
 
-1. **Connection Refused**
-   - Ensure AUTOMATIC1111 is running with `--api` flag
-   - Check if the `baseURL` is correct (default: `http://127.0.0.1:7860`)
+### Available Options
 
-2. **Model Not Found**
-   - Verify the model name matches exactly what's in AUTOMATIC1111
-   - Check that the model is properly loaded in the WebUI
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `negative_prompt` | `string` | `undefined` | What you don't want in the image |
+| `steps` | `number` | `20` | Number of sampling steps |
+| `cfg_scale` | `number` | `7` | CFG (Classifier Free Guidance) scale |
+| `sampler_name` | `string` | `"Euler a"` | Sampling method |
+| `denoising_strength` | `number` | `undefined` | Denoising strength for img2img (0.0-1.0) |
+| `styles` | `string[]` | `undefined` | Apply predefined styles |
+| `check_model_exists` | `boolean` | `false` | Verify model exists before generation |
 
-3. **Out of Memory**
-   - Reduce image size (e.g., from `1024x1024` to `512x512`)
-   - Lower the number of steps
-   - Use `--medvram` or `--lowvram` flags when starting AUTOMATIC1111
+## Model Management
 
-4. **Slow Generation**
-   - Reduce the number of steps
-   - Use faster samplers like "Euler a" or "DPM++ 2M"
-   - Enable xFormers in AUTOMATIC1111 settings
+The provider automatically detects available models from your AUTOMATIC1111 instance. To use a model:
 
-### Performance Tips
+1. Place your `.safetensors` or `.ckpt` model files in the `models/Stable-diffusion/` folder
+2. Restart AUTOMATIC1111 or refresh the models list in the web interface
+3. Use the exact model name (without file extension) in the provider
 
-- **GPU Memory**: AUTOMATIC1111 requires significant GPU memory. 8GB+ VRAM recommended
-- **Batch Size**: Generate multiple images in a single call rather than multiple separate calls
+## Additional Resources
 
-## API Reference
-
-### `createAutomatic1111(options?)`
-
-Creates a new Automatic1111 provider instance.
-
-#### Parameters
-
-- `options.baseURL` (string?): API endpoint URL (default: `'http://127.0.0.1:7860'`)
-- `options.headers` (object?): Custom HTTP headers
-- `options.apiKey`  (string?): API key (Not needed)
-#### Returns
-
-An `Automatic1111Provider` instance with image generation capabilities.
-
-### `automatic1111`
-
-Pre-configured provider instance using default settings.
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-## License
-
-MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Related
-
-- [Vercel AI SDK](https://sdk.vercel.ai) - The AI SDK this provider is built for
-- [AUTOMATIC1111](https://github.com/AUTOMATIC1111/stable-diffusion-webui) - Stable Diffusion WebUI
-- [Stable Diffusion](https://stability.ai/stable-diffusion) - The AI model powering image generation
+- [AUTOMATIC1111 Documentation](https://github.com/AUTOMATIC1111/stable-diffusion-webui)
+- [AUTOMATIC1111 Models](https://civitai.com/models)
+- [AUTOMATIC1111 HuggingFace](https://huggingface.co/models?other=automatic1111)
+- [Vercel AI SDK](https://ai-sdk.dev/)
