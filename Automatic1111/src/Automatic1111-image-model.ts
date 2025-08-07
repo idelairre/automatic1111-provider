@@ -58,7 +58,6 @@ export class Automatic1111ImageModel implements ImageModelV2 {
       });
     }
 
-    // remove non-request options from providerOptions
     const { negative_prompt, styles, steps, cfg_scale, sampler_name, denoising_strength, ...providerRequestOptions } =
       providerOptions.automatic1111 ?? {};
 
@@ -73,8 +72,6 @@ export class Automatic1111ImageModel implements ImageModelV2 {
 
     const modelId = model.model_name;
 
-    
-    // The actual request I believe is here, too retarded to be sure
     const { value: generationResponse, responseHeaders } = await postJsonToApi({
       url: this.getAutomatic1111GenerationsUrl(),
       headers: fullHeaders,
@@ -155,8 +152,6 @@ export class Automatic1111ImageModel implements ImageModelV2 {
   }
 }
 
-// limited version of the schema, focussed on what is needed for the implementation
-// this approach limits breakages when the API changes and increases efficiency
 const Automatic1111GenerationResponseSchema = z.object({
   images: z.array(z.string()),
 });
