@@ -1,19 +1,61 @@
 {
   "name": "automatic1111-provider",
   "version": "1.0.0",
+  "description": "A TypeScript provider for the Vercel AI SDK that enables image generation using AUTOMATIC1111 Stable Diffusion WebUI",
   "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "ai",
+    "artificial-intelligence",
+    "stable-diffusion",
+    "automatic1111",
+    "image-generation",
+    "vercel-ai-sdk",
+    "typescript",
+    "ai-provider"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ponesicek/automatic1111-provider.git"
+  },
+  "homepage": "https://github.com/ponesicek/automatic1111-provider#readme",
+  "bugs": {
+    "url": "https://github.com/ponesicek/automatic1111-provider/issues"
+  },
+  "author": "ponesicek",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "peerDependencies": {
+    "ai": "^5.0.0"
+  },
   "dependencies": {
     "@ai-sdk/provider": "^2.0.0",
     "@ai-sdk/provider-utils": "^3.0.1",
-    "ai": "^5.0.5"
+    "zod": "^4.0.0"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
     "typescript": "^5.9.2",
-    "ts-node": "^10.9.0"
+    "ts-node": "^10.9.0",
+    "ai": "^5.0.5"
   },
   "scripts": {
     "build": "tsc",
+    "prepublishOnly": "npm run build",
     "start:test": "node dist/test.js",
     "test": "npm run build && npm run start:test"
   }
