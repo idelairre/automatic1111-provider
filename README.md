@@ -187,9 +187,12 @@ const selectedModel = findBestModel(models, ['illustriousXL', 'sdxl', 'realistic
 - ✅ Image generation completes successfully
 - 💾 Image file saved to disk
 
-#### HTML Demo
+#### HTML Demos
 
-Run `npm run example:html` to start a local server using `serve`, then open your browser to `http://localhost:3000` to see the ComfyUI provider API usage pattern. Note: Actual image generation requires bundling the AI SDK for browser use.
+- **API Pattern Demo** (`npm run example:html`): Shows ComfyUI provider API usage patterns with simulated demo (port 3000)
+- **Browser Concept Demo** (`npm run example:browser`): Explains browser usage requirements and setup (port 3001)
+
+Both HTML demos demonstrate API patterns. Actual image generation requires Node.js + AI SDK bundling and CORS setup.
 
 ## Additional Resources
 
