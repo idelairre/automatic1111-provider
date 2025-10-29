@@ -9,43 +9,9 @@ import { createComfyUIProvider } from '../dist/index.js';
 import { experimental_generateImage as generateImage } from 'ai';
 import { writeFileSync } from 'fs';
 
-/**
- * Fetch available models from ComfyUI
- */
-async function fetchAvailableModels(baseURL = 'http://127.0.0.1:8188') {
-   try {
-      console.log('📋 Fetching available models from ComfyUI...');
-      const response = await fetch(`${baseURL}/models/checkpoints`);
-
-      if (!response.ok) {
-         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-      }
-
-      const models = await response.json();
-      console.log(`✅ Found ${models.length} available models:`);
-      models.slice(0, 10).forEach((model, index) => {
-         console.log(`   ${index + 1}. ${model}`);
-      });
-
-      if (models.length > 10) {
-         console.log(`   ... and ${models.length - 10} more models`);
-      }
-
-      return models;
-   } catch (error) {
-      console.error('❌ Failed to fetch models:', error.message);
-      console.log('💡 Make sure ComfyUI is running and accessible');
-      return [];
-   }
-}
-
 async function testComfyUIProvider() {
    console.log('🚀 Testing ComfyUI Provider - Basic Connection Test...');
    console.log('⚙️  Provider: ComfyUI (port 8188)');
-   console.log('');
-
-   // First, fetch available models to show what's installed
-   const availableModels = await fetchAvailableModels();
    console.log('');
 
    try {
