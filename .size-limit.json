@@ -1,0 +1,14 @@
+[
+   {
+      "name": "ComfyUI Provider (ESM)",
+      "path": "dist/index.js",
+      "limit": "50 kB",
+      "gzip": true
+   },
+   {
+      "name": "ComfyUI Provider (CJS)",
+      "path": "dist/index.js",
+      "limit": "55 kB",
+      "brotli": true
+   }
+]

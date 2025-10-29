@@ -1,129 +1,271 @@
 ---
-title: Automatic1111
-description: Automatic1111 Provider for the AI SDK
+title: ComfyUI Provider
+description: ComfyUI Provider for the Vercel AI SDK
 ---
 
-# Automatic1111
+# ComfyUI Provider
 
-[AUTOMATIC1111](https://github.com/AUTOMATIC1111/stable-diffusion-webui) is a popular web interface for Stable Diffusion that provides a comprehensive set of features for image generation. The Automatic1111 provider for the AI SDK enables seamless integration with locally hosted AUTOMATIC1111 instances while offering unique advantages:
+[ComfyUI](https://github.com/comfyanonymous/ComfyUI) is a powerful and modular Stable Diffusion GUI and backend that provides a node-based interface for creating complex image generation workflows. The ComfyUI Provider for the Vercel AI SDK enables seamless integration with locally hosted ComfyUI instances while offering unique advantages:
 
 - **Local Control**: Full control over your image generation with local Stable Diffusion models
 - **No API Costs**: Generate unlimited images without per-request charges
-- **Model Flexibility**: Use any Stable Diffusion checkpoint
+- **Workflow Flexibility**: Create and use custom ComfyUI workflows
 - **Privacy**: All generation happens locally on your hardware
 - **Community Models**: Access to thousands of community-created models from Civitai and HuggingFace
+- **Node-Based**: Leverage ComfyUI's powerful node system for complex generations
 
-Learn more about AUTOMATIC1111's capabilities in the [AUTOMATIC1111 Documentation](https://github.com/AUTOMATIC1111/stable-diffusion-webui).
+Learn more about ComfyUI's capabilities in the [ComfyUI Documentation](https://comfyanonymous.github.io/ComfyUI_examples/).
 
 ## Setup
 
-You need to have AUTOMATIC1111 running with the `--api` flag enabled. Start your AUTOMATIC1111 instance with:
+You need to have ComfyUI running with the API server enabled. Start ComfyUI normally - the API server is enabled by default and runs on port 8188.
 
-```bash
-# Windows
-./webui.bat --api
-
-# Linux/Mac
-./webui.sh --api
-```
-
-The Automatic1111 provider is available in the `automatic1111-provider` module. You can install it with:
+The ComfyUI provider is available in the `comfyui-provider` module. You can install it with:
 
 ```bash
 # pnpm
-pnpm add automatic1111-provider
+pnpm add comfyui-provider
 
 # npm
-npm install automatic1111-provider
+npm install comfyui-provider
 ```
 
 ## Provider Instance
 
-To create an Automatic1111 provider instance, use the `createAutomatic1111` function:
+To create a ComfyUI provider instance, use the `createComfyUIProvider` function:
 
 ```typescript
-import { createAutomatic1111 } from 'automatic1111-provider';
+import { createComfyUIProvider } from "comfyui-provider";
 
-const automatic1111 = createAutomatic1111({
-  baseURL: 'http://127.0.0.1:7860', // Your AUTOMATIC1111 instance
+const comfyUI = createComfyUIProvider({
+  baseURL: "http://127.0.0.1:8188", // Your ComfyUI instance
+  clientId: "comfyui", // Optional: unique client ID
+  apiKey: "your-api-key", // Optional: for authenticated requests
+  headers: {
+    "X-Custom-Header": "value", // Custom headers for all requests
+  },
 });
 ```
 
 ## Image Models
 
-The Automatic1111 provider supports image generation through the `image()` method:
+The ComfyUI provider supports image generation through the `image()` method. Model IDs should follow this naming convention:
+
+- **Lowercase with dashes**: Use dashes instead of spaces or underscores
+- **No file extensions**: Omit `.safetensors`, `.ckpt` extensions
+- **Examples**: `"sdxl-base"`, `"realistic-vision-v4"`, `"anything-v4"`
 
 ```typescript
-// Basic image generation
-const imageModel = automatic1111.image('v1-5-pruned-emaonly');
+// Using model IDs (following naming convention)
+const sdxlModel = comfyUI.image("sdxl-base");
+const realisticModel = comfyUI.image("realistic-vision-v4");
+const anythingModel = comfyUI.image("anything-v4");
 
-// With custom model
-const sdxlModel = automatic1111.image('sd_xl_base_1.0');
+// Using direct checkpoint filenames (also supported)
+const customModel = comfyUI.image("my-custom-model.safetensors");
 ```
+
+The provider automatically converts model IDs to checkpoint filenames:
+
+- `"sdxl-base"` → `"sdxl_base.safetensors"`
+- `"realistic-vision-v4"` → `"realistic_vision_v4.safetensors"`
+
+**Note:** SDXL models automatically use higher resolution defaults (1024x1024) and more steps (25) for optimal quality.
+
+### Finding Available Models
+
+To see what checkpoint files are available in your ComfyUI installation, you can:
+
+1. Check the ComfyUI web interface Models section
+2. Look in your ComfyUI `models/checkpoints/` directory
+3. Use the ComfyUI API endpoint `GET /models/checkpoints` to list available models
+4. Specify direct filenames with the `.safetensors` or `.ckpt` extension
+
+If a model you specify isn't found, ComfyUI will return an error listing all available checkpoints.
+
+## Model Validation & Discovery
+
+The ComfyUI provider includes utilities for model validation and discovery:
+
+```typescript
+import { checkpointExists } from "comfyui-provider";
+
+// Check if a specific model exists
+const exists = await checkpointExists(
+  "http://127.0.0.1:8188",
+  "sdxl_base.safetensors"
+);
+console.log("Model exists:", exists);
+```
+
+Use `checkModelExists: true` in provider options to validate models before generation and get helpful error messages.
 
 ## Examples
 
 ### Basic Image Generation
 
 ```typescript
-import { automatic1111 } from 'automatic1111-provider';
-import { experimental_generateImage as generateImage } from 'ai';
+import { comfyUIProvider } from "comfyui-provider";
+import { experimental_generateImage as generateImage } from "ai";
 
 const { images } = await generateImage({
-  model: automatic1111.image('v1-5-pruned-emaonly'),
-  prompt: 'A beautiful sunset over mountains',
-  size: '512x512',
+  model: comfyUIProvider.image("sdxl-base"),
+  prompt: "A beautiful sunset over mountains",
+  size: "512x512",
 });
+```
+
+### Aborting Image Generation
+
+The provider supports request cancellation through AbortSignal:
+
+```typescript
+const controller = new AbortController();
+const timeout = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+
+try {
+  const { images } = await generateImage({
+    model: comfyUIProvider.image("sdxl-base"),
+    prompt: "A beautiful sunset over mountains",
+    abortSignal: controller.signal, // Supports cancellation
+  });
+} catch (error) {
+  if (error.name === "AbortError") {
+    console.log("Image generation was cancelled");
+  }
+}
 ```
 
 ### Advanced Configuration
 
 ```typescript
 const { images } = await generateImage({
-  model: automatic1111.image('realistic-vision-v4'),
-  prompt: 'Portrait of a wise old wizard with a long beard',
-  n: 2,
+  model: comfyUI.image("realistic-vision-v4"),
+  prompt: "Portrait of a wise old wizard with a long beard",
+  n: 1,
   seed: 12345,
   providerOptions: {
-    automatic1111: {
-      negative_prompt: 'blurry, ugly, deformed, low quality',
+    comfyui: {
+      negativePrompt: "blurry, ugly, deformed, low quality",
       steps: 40,
-      cfg_scale: 8.5,
-      sampler_name: 'DPM++ SDE Karras',
-      styles: ['photorealistic', 'detailed'],
-      check_model_exists: true,
-    }
-  }
+      cfgScale: 8.5,
+      sampler: "euler_ancestral",
+      denoisingStrength: 0.8,
+      checkModelExists: true,
+    },
+  },
 });
 ```
 
+**Note:** All image generation parameters are configured through the `providerOptions.comfyui` object, similar to other AI SDK providers.
+
 ## Provider Options
 
-The Automatic1111 provider supports the following options for customizing image generation:
+The ComfyUI provider supports the following configuration options:
 
-### Available Options
+### Provider Configuration
 
-| Option | Type | Default | Description |
-|--------|------|---------|-------------|
-| `negative_prompt` | `string` | `undefined` | What you don't want in the image |
-| `steps` | `number` | `20` | Number of sampling steps |
-| `cfg_scale` | `number` | `7` | CFG (Classifier Free Guidance) scale |
-| `sampler_name` | `string` | `"Euler a"` | Sampling method |
-| `denoising_strength` | `number` | `undefined` | Denoising strength for img2img (0.0-1.0) |
-| `styles` | `string[]` | `undefined` | Apply predefined styles |
-| `check_model_exists` | `boolean` | `false` | Verify model exists before generation |
+| Option     | Type                     | Default                   | Description                            |
+| ---------- | ------------------------ | ------------------------- | -------------------------------------- |
+| `baseURL`  | `string`                 | `'http://127.0.0.1:8188'` | ComfyUI server URL                     |
+| `clientId` | `string`                 | `'comfyui'`               | Unique client ID for tracking requests |
+| `apiKey`   | `string`                 | `undefined`               | API key (adds Bearer auth header)      |
+| `headers`  | `Record<string, string>` | `undefined`               | Custom headers for requests            |
 
-## Model Management
+**Note:** Provider headers are combined with request-level headers using the AI SDK's `combineHeaders` utility. Provider headers take precedence over request headers for duplicate keys.
 
-The provider automatically detects available models from your AUTOMATIC1111 instance. To use a model:
+### Image Settings
 
-1. Place your `.safetensors` or `.ckpt` model files in the `models/Stable-diffusion/` folder
-2. Restart AUTOMATIC1111 or refresh the models list in the web interface
-3. Use the exact model name (without file extension) in the provider
+The ComfyUI provider supports comprehensive image generation parameters:
+
+| Option              | Type       | Default     | Description                             |
+| ------------------- | ---------- | ----------- | --------------------------------------- |
+| `negativePrompt`    | `string`   | `undefined` | What you don't want in the image        |
+| `seed`              | `number`   | `random`    | Random seed for reproducible results    |
+| `steps`             | `number`   | `20`        | Number of inference steps               |
+| `cfgScale`          | `number`   | `7`         | Classifier-free guidance scale          |
+| `sampler`           | `string`   | `"euler"`   | Sampling method                         |
+| `scheduler`         | `string`   | `"normal"`  | Scheduler type                          |
+| `width`             | `number`   | `512/1024*` | Image width (\*1024 for SDXL models)    |
+| `height`            | `number`   | `512/1024*` | Image height (\*1024 for SDXL models)   |
+| `denoisingStrength` | `number`   | `1`         | Denoising strength (0.0-1.0)            |
+| `styles`            | `string[]` | `undefined` | Predefined styles to apply              |
+| `checkModelExists`  | `boolean`  | `false`     | Validate model exists before generation |
+
+\*SDXL models automatically use optimized defaults for better quality.
+
+## Workflow Management
+
+The ComfyUI provider uses predefined workflows to control image generation. Each workflow can be customized with different models, samplers, and parameters.
+
+### Creating Workflows
+
+1. Design your workflow in the ComfyUI web interface
+2. Save the workflow as JSON
+3. The provider uses a built-in default workflow that includes:
+   - Model loading (CheckpointLoaderSimple)
+   - Text encoding (CLIPTextEncode for positive/negative prompts)
+   - Sampling (KSampler)
+   - Image decoding (VAEDecode)
+   - Saving (SaveImage)
+
+### Custom Workflows
+
+You can extend the provider to support custom workflows by modifying the `generateImages` method in the `ComfyUIImageModel` class.
+
+## Development
+
+### Installation
+
+```bash
+npm install
+```
+
+### Building
+
+```bash
+npm run build
+```
+
+### Testing
+
+The project uses **Vitest** for comprehensive testing with full coverage reporting.
+
+```bash
+# Run all tests
+npm test
+
+# Run tests in watch mode
+npm run test:watch
+
+# Run tests with coverage report
+npm run test:coverage
+
+# Run tests with UI (if Vitest UI is available)
+npm run test:ui
+```
+
+#### Test Structure
+
+- **Unit Tests**: Individual function and method testing
+- **Integration Tests**: Full workflow testing with mocked HTTP calls
+- **Coverage**: 87%+ overall coverage with detailed HTML reports
+- **Mock Setup**: Comprehensive mocking of fetch API for isolated testing
+
+#### Test Categories
+
+- **Provider Creation**: Testing provider instantiation and configuration
+- **Model Resolution**: Testing checkpoint filename conversion
+- **Image Generation**: Testing the complete doGenerate workflow
+- **Error Handling**: Testing API errors, timeouts, and validation
+- **Header Support**: Testing custom header merging and authentication
+- **Abort Signals**: Testing request cancellation support
 
 ## Additional Resources
 
-- [AUTOMATIC1111 Documentation](https://github.com/AUTOMATIC1111/stable-diffusion-webui)
-- [AUTOMATIC1111 Models](https://civitai.com/models)
-- [AUTOMATIC1111 HuggingFace](https://huggingface.co/models?other=automatic1111)
+- [ComfyUI Documentation](https://comfyanonymous.github.io/ComfyUI_examples/)
+- [ComfyUI GitHub](https://github.com/comfyanonymous/ComfyUI)
+- [ComfyUI Workflows](https://comfyworkflows.com/)
+- [Civitai Models](https://civitai.com/models)
+- [HuggingFace Models](https://huggingface.co/models)
 - [Vercel AI SDK](https://ai-sdk.dev/)

@@ -1,7 +1,7 @@
 {
-  "name": "automatic1111-provider",
+  "name": "comfyui-provider",
   "version": "0.1.1",
-  "description": "A TypeScript provider for the Vercel AI SDK that enables image generation using AUTOMATIC1111 Stable Diffusion WebUI",
+  "description": "A TypeScript provider for the Vercel AI SDK that enables image generation using ComfyUI",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -20,7 +20,7 @@
     "ai",
     "artificial-intelligence",
     "stable-diffusion",
-    "automatic1111",
+    "comfyui",
     "image-generation",
     "vercel-ai-sdk",
     "typescript",
@@ -28,14 +28,15 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/Ponesicek/automatic1111-provider"
+    "url": "https://github.com/idelairre/comfyui-provider"
   },
-  "homepage": "https://github.com/Ponesicek/automatic1111-provider#readme",
+  "homepage": "https://github.com/idelairre/comfyui-provider#readme",
   "bugs": {
-    "url": "https://github.com/Ponesicek/automatic1111-provider/issues"
+    "url": "https://github.com/idelairre/comfyui-provider/issues"
   },
-  "author": "ponesicek",
+  "author": "idelairre",
   "license": "MIT",
+  "sideEffects": false,
   "engines": {
     "node": ">=18.0.0"
   },
@@ -43,20 +44,44 @@
     "ai": "^5.0.0"
   },
   "dependencies": {
+    "@ai-sdk/openai-compatible": "^1.0.0",
     "@ai-sdk/provider": "^2.0.0",
     "@ai-sdk/provider-utils": "^3.0.1",
-    "zod": "^4.0.0"
+    "zod": "^4.1.8"
   },
   "devDependencies": {
+    "@size-limit/file": "^11.2.0",
     "@types/node": "^20.0.0",
-    "typescript": "^5.9.2",
+    "@typescript-eslint/eslint-plugin": "^8.46.2",
+    "@typescript-eslint/parser": "^8.46.2",
+    "@vitest/coverage-v8": "^4.0.5",
+    "ai": "^5.0.5",
+    "eslint": "^9.38.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.4",
+    "husky": "^9.1.7",
+    "jsdom": "^27.0.1",
+    "prettier": "^3.6.2",
+    "size-limit": "^11.2.0",
     "ts-node": "^10.9.0",
-    "ai": "^5.0.5"
+    "typescript": "^5.9.2",
+    "vitest": "^4.0.5"
   },
   "scripts": {
     "build": "tsc",
     "prepublishOnly": "npm run build",
-    "start:test": "node dist/test.js",
-    "test": "npm run build && npm run start:test"
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "test:ui": "vitest --ui",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src/**/*.ts",
+    "lint:fix": "eslint src/**/*.ts --fix",
+    "format": "prettier --write src/**/*.ts",
+    "format:check": "prettier --check src/**/*.ts",
+    "size": "size-limit",
+    "size:why": "size-limit --why",
+    "clean": "rm -rf dist",
+    "prepare": "husky install"
   }
 }
