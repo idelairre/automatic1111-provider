@@ -28,11 +28,11 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/idelairre/comfyui-provider"
+    "url": "https://github.com/idelairre/automatic1111-provider"
   },
-  "homepage": "https://github.com/idelairre/comfyui-provider#readme",
+  "homepage": "https://github.com/idelairre/automatic1111-provider#readme",
   "bugs": {
-    "url": "https://github.com/idelairre/comfyui-provider/issues"
+    "url": "https://github.com/idelairre/automatic1111-provider/issues"
   },
   "author": "idelairre",
   "license": "MIT",
