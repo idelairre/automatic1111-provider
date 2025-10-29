@@ -5,9 +5,12 @@
 # Build outputs (dist/ should be included for npm package)
 # dist/
 
-# Test outputs
+# Test outputs and generated images
 output.png
 output-*.png
+*.png
+motoko-*.png
+test-image-*.png
 
 # Environment variables
 .env
