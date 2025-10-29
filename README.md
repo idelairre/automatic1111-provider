@@ -135,6 +135,35 @@ The provider automatically detects available models from your ComfyUI instance. 
 
 Model IDs are automatically converted to checkpoint filenames (e.g., `"sdxl-base"` → `"sdxl_base.safetensors"`).
 
+## Testing
+
+The provider includes test applications to verify functionality:
+
+### Node.js Test Apps
+
+```bash
+# Basic connection test (recommended first)
+npm run test-simple
+
+# Advanced test with Sgt. Motoko prompt
+npm run test-app
+```
+
+### Test Results
+
+The test apps will:
+- ✅ Verify ComfyUI is running and accessible
+- ✅ Test provider configuration and API integration
+- ✅ Validate model availability and error handling
+- ✅ Generate and save sample images
+- ✅ Provide detailed troubleshooting guidance
+
+**Expected behavior:** If ComfyUI is not running, you'll see connection errors. If models are missing, you'll see model validation errors. This is normal and proves the provider is working correctly!
+
+### HTML Demo
+
+Open `test-app.html` in a browser to see the API usage pattern (requires bundling for actual image generation).
+
 ## Additional Resources
 
 - [ComfyUI Documentation](https://comfyanonymous.github.io/ComfyUI_examples/)
