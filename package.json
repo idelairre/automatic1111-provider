@@ -79,7 +79,7 @@
     "size:why": "size-limit --why",
     "clean": "rm -rf dist",
     "prepare": "husky install",
-    "test-app": "node test-app.js",
-    "test-simple": "node test-app-simple.js"
+    "example:motoko": "node examples/test-app.js",
+    "example:simple": "node examples/test-app-simple.js"
   }
 }

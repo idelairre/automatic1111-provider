@@ -139,19 +139,20 @@ Model IDs are automatically converted to checkpoint filenames (e.g., `"sdxl-base
 
 The provider includes test applications to verify functionality:
 
-### Node.js Test Apps
+### Node.js Examples
 
 ```bash
 # Basic connection test (recommended first)
-npm run test-simple
+npm run example:simple
 
 # Advanced test with Sgt. Motoko prompt
-npm run test-app
+npm run example:motoko
 ```
 
 ### Test Results
 
 The test apps will:
+
 - ✅ Verify ComfyUI is running and accessible
 - ✅ Test provider configuration and API integration
 - ✅ Validate model availability and error handling
@@ -162,7 +163,7 @@ The test apps will:
 
 ### HTML Demo
 
-Open `test-app.html` in a browser to see the API usage pattern (requires bundling for actual image generation).
+Open `examples/test-app.html` in a browser to see the API usage pattern (requires bundling for actual image generation).
 
 ## Additional Resources
 
