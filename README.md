@@ -152,6 +152,7 @@ npm run example:motoko
 ### Example Features
 
 The examples demonstrate:
+
 - ✅ **Model Discovery**: Fetch available models from ComfyUI API
 - ✅ **Dynamic Selection**: Automatically choose the best available model
 - ✅ **Connection Testing**: Verify ComfyUI accessibility
@@ -160,6 +161,7 @@ The examples demonstrate:
 - ✅ **File Saving**: Generated images saved to disk
 
 #### Model Fetching Example
+
 ```javascript
 // Fetch all available models
 const models = await fetchAvailableModels('http://127.0.0.1:8188');
@@ -174,6 +176,7 @@ const selectedModel = findBestModel(models, ['illustriousXL', 'sdxl', 'realistic
 **Expected behavior:** If ComfyUI is not running, you'll see connection errors. If models are missing, you'll see model validation errors with helpful suggestions. This proves the provider's error handling works correctly!
 
 **Success indicators:**
+
 - 📋 Model list fetched and displayed
 - 🎯 Preferred model automatically selected
 - ✅ Image generation completes successfully
