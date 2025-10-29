@@ -48,6 +48,14 @@ const comfyUI = createComfyUIProvider({
 });
 ```
 
+Or use the pre-configured provider instance:
+
+```typescript
+import { comfyUIProvider } from 'comfyui-provider';
+// or
+import comfyUIProvider from 'comfyui-provider';
+```
+
 ## Image Models
 
 The ComfyUI provider supports image generation through the `image()` method:
@@ -65,11 +73,11 @@ const realisticModel = comfyUI.image('realistic-vision-v4');
 ### Basic Image Generation
 
 ```typescript
-import { comfyUI } from 'comfyui-provider';
+import { comfyUIProvider } from 'comfyui-provider';
 import { experimental_generateImage as generateImage } from 'ai';
 
 const { images } = await generateImage({
-  model: comfyUI.image('sdxl-base'),
+  model: comfyUIProvider.image('sdxl-base'),
   prompt: 'A beautiful sunset over mountains',
   size: '512x512',
 });
@@ -79,7 +87,7 @@ const { images } = await generateImage({
 
 ```typescript
 const { images } = await generateImage({
-  model: comfyUI.image('realistic-vision-v4'),
+  model: comfyUIProvider.image('realistic-vision-v4'),
   prompt: 'Portrait of a wise old wizard with a long beard',
   n: 2,
   seed: 12345,
@@ -101,19 +109,19 @@ The ComfyUI provider supports the following options for customizing image genera
 
 ### Available Options
 
-| Option               | Type       | Default     | Description                              |
-| -------------------- | ---------- | ----------- | ---------------------------------------- |
-| `negativePrompt`     | `string`   | `undefined` | What you don't want in the image         |
-| `seed`               | `number`   | `random`    | Random seed for reproducible results     |
-| `steps`              | `number`   | `20`        | Number of inference steps                |
-| `cfgScale`           | `number`   | `7`         | Classifier-free guidance scale           |
-| `sampler`            | `string`   | `"euler"`   | Sampling method                          |
-| `scheduler`          | `string`   | `"normal"`  | Scheduler type                           |
-| `width`              | `number`   | `512/1024*` | Image width (*1024 for SDXL models)      |
-| `height`             | `number`   | `512/1024*` | Image height (*1024 for SDXL models)     |
-| `denoisingStrength`  | `number`   | `1`         | Denoising strength (0.0-1.0)             |
-| `styles`             | `string[]` | `undefined` | Predefined styles to apply               |
-| `checkModelExists`   | `boolean`  | `false`     | Validate model exists before generation  |
+| Option              | Type       | Default     | Description                             |
+| ------------------- | ---------- | ----------- | --------------------------------------- |
+| `negativePrompt`    | `string`   | `undefined` | What you don't want in the image        |
+| `seed`              | `number`   | `random`    | Random seed for reproducible results    |
+| `steps`             | `number`   | `20`        | Number of inference steps               |
+| `cfgScale`          | `number`   | `7`         | Classifier-free guidance scale          |
+| `sampler`           | `string`   | `"euler"`   | Sampling method                         |
+| `scheduler`         | `string`   | `"normal"`  | Scheduler type                          |
+| `width`             | `number`   | `512/1024*` | Image width (\*1024 for SDXL models)    |
+| `height`            | `number`   | `512/1024*` | Image height (\*1024 for SDXL models)   |
+| `denoisingStrength` | `number`   | `1`         | Denoising strength (0.0-1.0)            |
+| `styles`            | `string[]` | `undefined` | Predefined styles to apply              |
+| `checkModelExists`  | `boolean`  | `false`     | Validate model exists before generation |
 
 \*SDXL models automatically use optimized defaults for better quality.
 
