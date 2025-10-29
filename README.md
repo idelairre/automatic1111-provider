@@ -189,7 +189,7 @@ const selectedModel = findBestModel(models, ['illustriousXL', 'sdxl', 'realistic
 
 #### HTML Demo
 
-Run `npm run example:html` to start a local server, then open your browser to see the ComfyUI provider API usage pattern. Note: Actual image generation requires bundling the AI SDK for browser use.
+Run `npm run example:html` to start a local server using `serve`, then open your browser to `http://localhost:3000` to see the ComfyUI provider API usage pattern. Note: Actual image generation requires bundling the AI SDK for browser use.
 
 ## Additional Resources
 
