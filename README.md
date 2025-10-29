@@ -139,7 +139,9 @@ Model IDs are automatically converted to checkpoint filenames (e.g., `"sdxl-base
 
 The provider includes test applications to verify functionality:
 
-### Node.js Examples
+### Examples
+
+#### Node.js Examples
 
 ```bash
 # Basic connection test (recommended first)
@@ -147,9 +149,12 @@ npm run example:simple
 
 # Advanced test with Sgt. Motoko prompt
 npm run example:motoko
+
+# HTML demo server (API usage demonstration)
+npm run example:html
 ```
 
-### Example Features
+#### Example Features
 
 The examples demonstrate:
 
@@ -182,9 +187,9 @@ const selectedModel = findBestModel(models, ['illustriousXL', 'sdxl', 'realistic
 - ✅ Image generation completes successfully
 - 💾 Image file saved to disk
 
-### HTML Demo
+#### HTML Demo
 
-Open `examples/test-app.html` in a browser to see the API usage pattern (requires bundling for actual image generation).
+Run `npm run example:html` to start a local server, then open your browser to see the ComfyUI provider API usage pattern. Note: Actual image generation requires bundling the AI SDK for browser use.
 
 ## Additional Resources
 
